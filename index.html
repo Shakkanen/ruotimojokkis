@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Jokkisradan 3D-malli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+<style>
+/* VOICE: plain, proud club notice – facts first, no hype
+   IDEA: a race-day track sheet: big map, ruled spec table
+   PICTURE: the rotatable 3D model itself, then the orthophoto
+   COLOUR and TYPE: spruce green field, gravel tan, race-tape red accent; Barlow Condensed + Barlow
+   LAYOUT: title band, full-width viewer, ortho, ruled table, short next-steps */
+:root{color-scheme:light dark;
+--bg:light-dark(#fbfaf7,#121714);--ink:light-dark(#18201b,#e8ebe6);--mute:light-dark(#5b645d,#9fa8a1);
+--spruce:#1d3a2c;--spruce2:#25493a;--gravel:light-dark(#d8ccb4,#3a3428);--red:#d7262c;--rule:light-dark(#d9d5cc,#2d332f)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Barlow,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(24px,4vw,56px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+h1,h2{font-family:"Barlow Condensed",Barlow,sans-serif;font-weight:700;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,6vw,52px)}
+h2{font-size:clamp(26px,3.6vw,34px);margin-bottom:14px}
+.top{background:var(--spruce);color:#eef3ee;padding-bottom:0}
+.top p{max-width:62ch;margin:10px 0 22px;color:#c9d6cc;font-size:17px}
+.tape{height:8px;background:repeating-linear-gradient(90deg,var(--red) 0 28px,#fff 28px 56px)}
+.viewer{background:var(--spruce2);padding:0 max(5vw,16px) clamp(20px,3vw,36px)}
+model-viewer{display:block;width:100%;height:clamp(380px,64vh,720px);background:radial-gradient(ellipse at 50% 40%,#3b6450,#1a3327);border-radius:6px;--progress-bar-color:var(--red);--poster-color:transparent}
+.load{position:absolute;inset:auto 0 50% 0;text-align:center;color:#dfe8e1;font-weight:600;pointer-events:none}
+.hint{color:#c9d6cc;font-size:14px;margin:12px 0 0;display:flex;flex-wrap:wrap;gap:6px 18px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button{font:600 15px Barlow,sans-serif;min-height:44px;padding:0 16px;border-radius:4px;border:1.5px solid #8fb09c;background:transparent;color:#eef3ee;cursor:pointer}
+button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.light button{border-color:var(--rule);color:var(--ink);background:var(--bg)}
+.ortho{border:1px solid var(--rule);border-radius:6px;overflow:auto;max-height:80vh;background:var(--gravel)}
+.ortho img{display:block;width:100%;height:auto}
+.ortho.full img{width:4000px;max-width:none}
+.cap{color:var(--mute);font-size:14px;margin:8px 0 0}
+.grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:start}
+table{width:100%;border-collapse:collapse;font-size:16px}
+th,td{text-align:left;padding:10px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:500;color:var(--mute);width:46%}
+td{font-weight:600}
+.next p{margin:0 0 12px;max-width:60ch}
+.next b{color:var(--red)}
+footer{color:var(--mute);font-size:14px;border-top:1px solid var(--rule)}
+@media(max-width:760px){.grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){th{width:50%}table{font-size:15px}}
+</style>
+</head>
+<body>
+<header class="band top">
+  <div class="wrap">
+    <h1>Jokkisradan 3D-malli dronekuvista</h1>
+    <p>Rata kuvattiin dronella kahdella lennolla ja kuvista laskettiin koko alueen 3D-malli ja tarkka ilmakuva. Mallia voi pyöritellä suoraan tässä.</p>
+  </div>
+</header>
+<div class="tape" aria-hidden="true"></div>
+
+<section class="viewer">
+  <div class="wrap">
+    <model-viewer id="mv" src="malli.glb" alt="Jokkisradan 3D-malli" camera-controls touch-action="pan-y"
+      camera-orbit="20deg 50deg auto" interaction-prompt="none" shadow-intensity="0" exposure="1" min-camera-orbit="auto auto 20m">
+      <div class="load" slot="progress-bar" id="load">Ladataan mallia… 0 %</div>
+    </model-viewer>
+    <div class="hint"><span>Pyöritä: yksi sormi tai hiiri</span><span>Siirrä: kaksi sormea tai oikea painike</span><span>Zoomaa: nipistä tai rulla</span></div>
+    <div class="btns">
+      <button type="button" id="top">Ylhäältä</button>
+      <button type="button" id="side">Viistosta</button>
+      <button type="button" id="reset">Alkunäkymä</button>
+    </div>
+  </div>
+</section>
+
+<section class="band light">
+  <div class="wrap">
+    <h2>Ilmakuva koko radasta</h2>
+    <div class="ortho" id="ortho"><img src="ortokuva.webp" alt="Ortokuva jokkisradasta ylhäältä" width="4000" height="4461" loading="lazy"></div>
+    <div class="btns"><button type="button" id="zoom" aria-pressed="false">Näytä tarkempana</button></div>
+    <p class="cap">Ortokuva on oikaistu ilmakuva: mittakaava on sama joka kohdassa, kuten kartassa. Tällä sivulla noin 9 cm/pikseli, alkuperäinen 5 cm/pikseli.</p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap grid">
+    <div>
+      <h2>Miten malli tehtiin</h2>
+      <table>
+        <tr><th>Drone</th><td>DJI Air 2</td></tr>
+        <tr><th>Lennot</th><td>2 ristikkolentoa, toinen käännetty 45°</td></tr>
+        <tr><th>Lento 1</th><td>60 m, kamera 70° alaspäin</td></tr>
+        <tr><th>Lento 2</th><td>50 m, kamera 60° alaspäin</td></tr>
+        <tr><th>Kuvien päällekkäisyys</th><td>80 %</td></tr>
+        <tr><th>Kuvaussuunnat</th><td>8 suuntaa, 45° välein</td></tr>
+        <tr><th>Kuvia</th><td>498</td></tr>
+        <tr><th>Laskenta</th><td>WebODM, 4 h 2 min</td></tr>
+        <tr><th>Kuvattu alue</th><td>noin 375 × 420 m</td></tr>
+        <tr><th>Ilmakuvan tarkkuus</th><td>5 cm/pikseli</td></tr>
+      </table>
+    </div>
+    <div class="next">
+      <h2>Mihin tätä käytetään</h2>
+      <p>Mallista on tarkoitus tehdä rata <b>Assetto Corsa</b> -ajosimulaattoriin, jolloin rataa voi ajaa myös virtuaalisesti.</p>
+      <p>Mallin pinnanmuodot ja ilmakuva toimivat pohjana: ajopinta mallinnetaan niiden päälle siistiksi, ja ympäristö saadaan suoraan kuvista.</p>
+      <p>Tällä sivulla mallin tekstuureja on kevennetty, jotta se aukeaa nopeasti puhelimessakin. Täyden tarkkuuden malli on tallessa.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="band"><div class="wrap">Kuvannut ja laskenut Samuli, marraskuu 2026.</div></footer>
+
+<script>
+{
+  const mv=document.getElementById('mv'), load=document.getElementById('load');
+  mv.addEventListener('progress',e=>{
+    const p=Math.round(e.detail.totalProgress*100);
+    load.textContent=p<100?'Ladataan mallia… '+p+' %':'';
+  });
+  const view=o=>{mv.cameraOrbit=o;mv.fieldOfView='auto';};
+  document.getElementById('top').addEventListener('click',()=>view('0deg 0.1deg auto'));
+  document.getElementById('side').addEventListener('click',()=>view('45deg 65deg auto'));
+  document.getElementById('reset').addEventListener('click',()=>{view('20deg 50deg auto');mv.cameraTarget='auto auto auto';});
+  const o=document.getElementById('ortho'), z=document.getElementById('zoom');
+  z.addEventListener('click',()=>{
+    const f=o.classList.toggle('full');
+    z.textContent=f?'Sovita näytölle':'Näytä tarkempana';
+    z.setAttribute('aria-pressed',String(f));
+    if(f){o.scrollLeft=(o.scrollWidth-o.clientWidth)/2;o.scrollTop=(o.scrollHeight-o.clientHeight)/2;}
+  });
+}
+</script>
+</body>
+</html>
